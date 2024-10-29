@@ -3,7 +3,7 @@
 
 ## Database Schema Design
 
-`<insert database schema design here>`
+`<<iframe width="560" height="315" src='https://dbdiagram.io/e/671fff6b97a66db9a390d396/67214128b4216d5a28a4f2c4'> </iframe>`
 
 ## API Documentation
 
