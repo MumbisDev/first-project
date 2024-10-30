@@ -51,7 +51,7 @@ Returns the information about the current user that is logged in.
 * Require Authentication: false
 * Request
   * Method: GET
-  * Route path: /api/user/
+  * Route path: /api/users/:userId
   * Body: none
 
 * Successful Response when there is a logged in user
@@ -92,7 +92,7 @@ information.
 * Require Authentication: false
 * Request
   * Method: POST
-  * Route path: /api/user/
+  * Route path: /api/user/login
   * Headers:
     * Content-Type: application/json
   * Body:
@@ -158,7 +158,7 @@ user's information.
 * Require Authentication: false
 * Request
   * Method: POST
-  * Route path: /api/users
+  * Route path: /api/user/signup
   * Headers:
     * Content-Type: application/json
   * Body:
@@ -274,7 +274,7 @@ Returns all the spots owned (created) by the current user.
 * Require Authentication: true
 * Request
   * Method: GET
-  * Route path: /api/spots/current
+  * Route path: /api/spots/current/:userId
   * Body: none
 
 * Successful Response
@@ -453,7 +453,7 @@ Create and return a new image for a spot specified by id.
 * Require proper authorization: Spot must belong to the current user
 * Request
   * Method: POST
-  * Route path: /api/spots/spotid/images
+  * Route path: /api/spots/:spotId/images
   * Headers:
     * Content-Type: application/json
   * Body:
@@ -969,7 +969,7 @@ Return all the bookings that the current user has made.
 * Require Authentication: true
 * Request
   * Method: GET
-  * Route path: /api/bookings/current
+  * Route path: /api/bookings/current/:userId
   * Body: none
 
 * Successful Response
@@ -1309,7 +1309,7 @@ Delete an existing image for a Spot.
 * Require proper authorization: Spot must belong to the current user
 * Request
   * Method: DELETE
-  * Route path: /api/spot/images/imageid/
+  * Route path: /api/spot/images/:imageid/
   * Body: none
 
 * Successful Response
@@ -1344,7 +1344,7 @@ Delete an existing image for a Review.
 * Require proper authorization: Review must belong to the current user
 * Request
   * Method: DELETE
-  * Route path: /api/review/images/imageid
+  * Route path: /api/review/images/:imageid
   * Body: none
 
 * Successful Response
