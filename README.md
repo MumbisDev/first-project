@@ -2,8 +2,7 @@
 
 ## Database Schema Design
 
-![db-schema]
-[db-schema]: ./images/BnBSchema.png
+![db-schema](./images/BnBSchema.png)
 
 ## API Documentation
 
