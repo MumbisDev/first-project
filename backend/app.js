@@ -42,6 +42,11 @@ app.use(
   })
 );
 
+// backend/app.js
+const routes = require("./routes");
+
+app.use(routes); // Connect all the routes
+
 app.use((err, _req, _res, next) => {
   // check if error is a Sequelize error:
   if (err instanceof ValidationError) {
@@ -65,12 +70,6 @@ app.use((err, _req, res, _next) => {
     stack: isProduction ? null : err.stack,
   });
 });
-
-// backend/app.js
-const routes = require("./routes");
-
-app.use(routes); // Connect all the routes
-
 app.use((_req, _res, next) => {
   const err = new Error("The requested resource couldn't be found.");
   err.title = "Resource Not Found";
