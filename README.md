@@ -3,7 +3,7 @@
 
 ## Database Schema Design
 
-![Schema](C:\Users\boutt\Downloads\BnB Schema.png)
+![Schema](C:\Users\boutt\Downloads\BnBSchema.png)
 
 ## API Documentation
 
