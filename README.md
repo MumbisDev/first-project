@@ -1,5 +1,5 @@
 
-# [AtoZ BnB]
+# AtoZ BnB
 
 ## Database Schema Design
 
