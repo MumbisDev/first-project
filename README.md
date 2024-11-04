@@ -3,7 +3,7 @@
 
 ## Database Schema Design
 
-![Schema](https://imgur.com/a/DgPdUQu)
+![Schema](https://i.imgur.com/VqPiN79.png)
 
 ## API Documentation
 
