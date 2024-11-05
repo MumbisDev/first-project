@@ -1,8 +1,15 @@
 'use strict';
 
+let options = {};
+if (process.env.NODE_ENV === "production") {
+  options.schema = process.env.SCHEMA; // define your schema in options object
+}
+
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.bulkInsert('Reviews', [
+    options.tableName = "Reviews";
+    await queryInterface.bulkInsert(
+      options, [
       {
         spotId: 1,  // Make sure spotId exists in the Spots table
         userId: 1,  // Make sure userId exists in the Users table

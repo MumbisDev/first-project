@@ -1,8 +1,15 @@
 'use strict';
 
+let options = {};
+if (process.env.NODE_ENV === "production") {
+  options.schema = process.env.SCHEMA; // define your schema in options object
+}
+
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.bulkInsert('Spots', [
+    options.tableName = "Spots"
+    await queryInterface.bulkInsert(
+      options, [
       {
         ownerId: 1, // Replace with a valid owner ID from your Users table
         address: '123 Main St',
