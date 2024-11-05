@@ -1,19 +1,18 @@
 "use strict";
 const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
-  class Review extends Model {
+  class Booking extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      Review.belongsTo(models.User, { foreignKey: "userId" });
-      Review.belongsTo(models.Spot, { foreignKey: "spotId" });
-      Review.hasMany(models.ReviewImage, { foreignKey: "reviewId" });
+      Booking.belongsTo(models.Spot, { foreignKey: "spotId" });
+      Booking.belongsTo(models.User, { foreignKey: "userId" });
     }
   }
-  Review.init(
+  Booking.init(
     {
       id: {
         allowNull: false,
@@ -31,16 +30,23 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         references: { model: "Users", key: "id" },
       },
-      review: {
-        type: DataTypes.TEXT,
-        allowNull: false,
-      },
-      stars: {
-        type: DataTypes.INTEGER,
+      startDate: {
+        type: DataTypes.DATEONLY,
         allowNull: false,
         validate: {
-          min: 1,
-          max: 5,
+          isDate: true,
+          isAfter: new Date().toISOString().slice(0, 10),
+        },
+      },
+      endDate: {
+        type: DataTypes.DATEONLY,
+        allowNull: false,
+        validate: {
+          isDate: true,
+          isAfter: {
+            args: [DataTypes.col("startDate")],
+            msg: "endDate cannot be on or before startDate",
+          },
         },
       },
       createdAt: {
@@ -56,8 +62,13 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       sequelize,
-      modelName: "Review",
+      modelName: "Booking",
+      defaultScope: {
+        attributes: {
+          exclude: ["createdAt", "updatedAt"],
+        },
+      },
     }
   );
-  return Review;
+  return Booking;
 };

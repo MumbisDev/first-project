@@ -1,19 +1,17 @@
 "use strict";
 const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
-  class Review extends Model {
+  class SpotImage extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      Review.belongsTo(models.User, { foreignKey: "userId" });
-      Review.belongsTo(models.Spot, { foreignKey: "spotId" });
-      Review.hasMany(models.ReviewImage, { foreignKey: "reviewId" });
+      SpotImage.belongsTo(models.Spot, { foreignKey: "spotId" });
     }
   }
-  Review.init(
+  SpotImage.init(
     {
       id: {
         allowNull: false,
@@ -26,22 +24,14 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         references: { model: "Spots", key: "id" },
       },
-      userId: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: { model: "Users", key: "id" },
-      },
-      review: {
-        type: DataTypes.TEXT,
+      url: {
+        type: DataTypes.STRING,
         allowNull: false,
       },
-      stars: {
-        type: DataTypes.INTEGER,
+      preview: {
+        type: DataTypes.BOOLEAN,
         allowNull: false,
-        validate: {
-          min: 1,
-          max: 5,
-        },
+        defaultValue: false,
       },
       createdAt: {
         allowNull: false,
@@ -56,8 +46,13 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       sequelize,
-      modelName: "Review",
+      modelName: "SpotImage",
+      defaultScope: {
+        attributes: {
+          exclude: ["createdAt", "updatedAt"],
+        },
+      },
     }
   );
-  return Review;
+  return SpotImage;
 };
