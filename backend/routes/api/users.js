@@ -71,4 +71,20 @@ router.get("/:userId", async (req, res) => {
   }
 });
 
+router.post("/login", async (req, res) => {
+  // const hash = bcrypt.hashSync(req.body.password)
+  const user = await User.findOne({ where: { email: req.body.credential }});
+
+  try {
+    if (!user) {
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
+
+    res.status(200).json({ user });
+
+  } catch (err) {
+    res.status(500).json({ message: "Internal server error" });
+  }
+})
+
 module.exports = router;
