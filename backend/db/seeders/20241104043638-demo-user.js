@@ -10,39 +10,35 @@ if (process.env.NODE_ENV === "production") {
 module.exports = {
   async up(queryInterface, Sequelize) {
     options.tableName = "Users"; // define table name in options object
-    return queryInterface.bulkInsert(
-      options,
-      [
-        {
-          firstName: "Bob",
-          lastName: "Bobert",
-          email: "demo@user.io",
-          username: "Demo-lition",
-          hashedPassword: bcrypt.hashSync("password"),
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        },
-        {
-          firstName: "Jane",
-          lastName: "Doe",
-          email: "user1@user.io",
-          username: "FakeUser1",
-          hashedPassword: bcrypt.hashSync("password2"),
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        },
-        {
-          firstName: "Laura",
-          lastName: "Michaels",
-          email: "user2@user.io",
-          username: "FakeUser2",
-          hashedPassword: bcrypt.hashSync("password3"),
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        },
-      ],
-      {}
-    );
+    return queryInterface.bulkInsert(options, [
+      {
+        firstName: "Bob",
+        lastName: "Bobert",
+        email: "demo@user.io",
+        username: "Demo-lition",
+        hashedPassword: bcrypt.hashSync("password"),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        firstName: "Jane",
+        lastName: "Doe",
+        email: "user1@user.io",
+        username: "FakeUser1",
+        hashedPassword: bcrypt.hashSync("password2"),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        firstName: "Laura",
+        lastName: "Michaels",
+        email: "user2@user.io",
+        username: "FakeUser2",
+        hashedPassword: bcrypt.hashSync("password3"),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+    ]);
   },
 
   async down(queryInterface, Sequelize) {
