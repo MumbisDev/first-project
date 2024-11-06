@@ -2,6 +2,8 @@ const express = require("express");
 const bcrypt = require("bcryptjs");
 const { check } = require("express-validator");
 const { handleValidationErrors } = require("../../utils/validation");
+// const authenticate = require('../../utils/auth'); 
+
 
 const { setTokenCookie, requireAuth } = require("../../utils/auth");
 const { User } = require("../../db/models");
@@ -55,6 +57,20 @@ router.post("/", validateSignup, async (req, res) => {
   return res.json({
     user: safeUser,
   });
+});
+
+router.get('/:userId', async (req, res) => {
+  try {
+      const user = await User.findById(req.user.id); 
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+  
+      res.status(200).json({ user });
+    } catch (err) {
+      console.log(req.params.id);
+      res.status(500).json({ message: 'Internal server error' });
+    }
 });
 
 module.exports = router;
