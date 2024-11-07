@@ -71,20 +71,32 @@ router.get("/:userId", async (req, res) => {
   }
 });
 
-router.post("/login", async (req, res) => {
-  // const hash = bcrypt.hashSync(req.body.password)
-  const user = await User.findOne({ where: { email: req.body.credential }});
-
-  try {
-    if (!user) {
+router.post("/login", handleValidationErrors, async (req, res) => {
+  // const hash = bcrypt.hashSync(req.body.password);
+  const user = await User.findOne({
+    where: {
+      email: req.body.credential,
+    },
+  });
+  bcrypt.compare(req.body.password, user.hashedPassword, (err, result) => {
+    if (err) {
+      // Handle error
+      console.error("Error comparing passwords:", err);
+      return;
+    } else if (!result) {
       return res.status(401).json({ message: "Invalid credentials" });
+    } else {
+      res.status(200).json({
+        user: {
+          id: user.id,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email,
+          username: user.username,
+        },
+      });
     }
-
-    res.status(200).json({ user });
-
-  } catch (err) {
-    res.status(500).json({ message: "Internal server error" });
-  }
-})
+  });
+});
 
 module.exports = router;
