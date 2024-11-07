@@ -5,7 +5,11 @@ const { handleValidationErrors } = require("../../utils/validation");
 // const authenticate = require('../../utils/auth');
 
 const { setTokenCookie, requireAuth } = require("../../utils/auth");
-const { User } = require("../../db/models");
+const { User } = require("../../db/models/user");
+const { Spot } = require("../../db/models/spot");
+
+
+
 
 const router = express.Router();
 
@@ -130,5 +134,22 @@ router.post("/signup", handleValidationErrors, validateSignup, async (req, res) 
     },
   });
 })
+
+router.get("/spots", async (req, res) => {
+  
+  try {
+    const spots = await Spot.findAll();  
+
+
+    if (!spots) {
+      return res.status(404).json({ message: "No spots found" });
+    }
+    res.status(200).json({ spots });
+  } catch (err) {
+    console.error(err);  
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 
 module.exports = router;
