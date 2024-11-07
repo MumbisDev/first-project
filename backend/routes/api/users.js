@@ -5,8 +5,8 @@ const { handleValidationErrors } = require("../../utils/validation");
 // const authenticate = require('../../utils/auth');
 
 const { setTokenCookie, requireAuth } = require("../../utils/auth");
-const { User } = require("../../db/models/user");
-const { Spot } = require("../../db/models/spot");
+const { User } = require("../../db/models");
+
 
 
 

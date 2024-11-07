@@ -38,6 +38,20 @@ module.exports = {
         createdAt: new Date(),
         updatedAt: new Date(),
       },
+      {
+        ownerId: 3, // Replace with a valid owner ID from your Users table
+        address: '122 Sun St',
+        city: 'Los Angeles',
+        state: 'CA',
+        country: 'USA',
+        lat: 34.0522,
+        lng: -118.2437,
+        name: 'Cozy Cottage',
+        description: 'A cozy cottage with an ocean view.',
+        price: 200.00,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      }
       // Add more entries as needed
     ]);
   },
