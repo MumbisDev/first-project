@@ -75,7 +75,7 @@ router.post("/login", handleValidationErrors, async (req, res) => {
   // const hash = bcrypt.hashSync(req.body.password);
   const user = await User.findOne({
     where: {
-      email: req.body.credential,
+      email: req.body.email
     },
   });
   bcrypt.compare(req.body.password, user.hashedPassword, (err, result) => {
