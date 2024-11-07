@@ -4,12 +4,12 @@ const bcrypt = require("bcryptjs");
 
 let options = {};
 if (process.env.NODE_ENV === "production") {
-  options.schema = process.env.SCHEMA; // define your schema in options object
+  options.schema = process.env.SCHEMA;
 }
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    options.tableName = "Users"; // define table name in options object
+    options.tableName = "Users";
     return queryInterface.bulkInsert(options, [
       {
         firstName: "Bob",
@@ -43,13 +43,28 @@ module.exports = {
 
   async down(queryInterface, Sequelize) {
     options.tableName = "Users";
-    const Op = Sequelize.Op;
-    return queryInterface.bulkDelete(
-      options,
-      {
-        username: { [Op.in]: ["Demo-lition", "FakeUser1", "FakeUser2"] },
-      },
-      {}
-    );
+    await queryInterface.bulkDelete(options, null, {});
+
+    if (options.schema) {
+      await queryInterface.sequelize.query(
+        `ALTER SEQUENCE "${options.schema}"."Users_id_seq" RESTART WITH 1;`
+      );
+    } else {
+      const dbType = queryInterface.sequelize.getDialect();
+
+      if (dbType === "sqlite") {
+        await queryInterface.sequelize.query(
+          `UPDATE sqlite_sequence SET seq = 0 WHERE name = 'Users';`
+        );
+      } else if (dbType === "mysql") {
+        await queryInterface.sequelize.query(
+          `ALTER TABLE Users AUTO_INCREMENT = 1;`
+        );
+      } else if (dbType === "postgres") {
+        await queryInterface.sequelize.query(
+          `ALTER SEQUENCE "Users_id_seq" RESTART WITH 1;`
+        );
+      }
+    }
   },
 };

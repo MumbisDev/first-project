@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 let options = {};
 if (process.env.NODE_ENV === "production") {
@@ -7,38 +7,59 @@ if (process.env.NODE_ENV === "production") {
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    options.tableName = 'ReviewImages';
-    await queryInterface.bulkInsert(
-      options, [
+    options.tableName = "ReviewImages";
+    await queryInterface.bulkInsert(options, [
       {
-        reviewId: 1,  // Ensure this reviewId exists in the Reviews table
-        url: 'https://example.com/images/review1_image1.jpg',
+        reviewId: 1,
+        url: "https://example.com/images/review1_image1.jpg",
         createdAt: new Date(),
         updatedAt: new Date(),
       },
       {
-        reviewId: 1,  // Another image for the same review
-        url: 'https://example.com/images/review1_image2.jpg',
+        reviewId: 1,
+        url: "https://example.com/images/review1_image2.jpg",
         createdAt: new Date(),
         updatedAt: new Date(),
       },
       {
-        reviewId: 2,  // Another review, so different reviewId
-        url: 'https://example.com/images/review2_image1.jpg',
+        reviewId: 2,
+        url: "https://example.com/images/review2_image1.jpg",
         createdAt: new Date(),
         updatedAt: new Date(),
       },
       {
-        reviewId: 2,  // Same review, another image
-        url: 'https://example.com/images/review2_image2.jpg',
+        reviewId: 2,
+        url: "https://example.com/images/review2_image2.jpg",
         createdAt: new Date(),
         updatedAt: new Date(),
       },
-      // Add more review images as needed
     ]);
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.bulkDelete('ReviewImages', null, {});
+    options.tableName = "ReviewImages";
+    await queryInterface.bulkDelete(options, null, {});
+
+    if (options.schema) {
+      await queryInterface.sequelize.query(
+        `ALTER SEQUENCE "${options.schema}"."ReviewImages_id_seq" RESTART WITH 1;`
+      );
+    } else {
+      const dbType = queryInterface.sequelize.getDialect();
+
+      if (dbType === "sqlite") {
+        await queryInterface.sequelize.query(
+          `UPDATE sqlite_sequence SET seq = 0 WHERE name = 'ReviewImages';`
+        );
+      } else if (dbType === "mysql") {
+        await queryInterface.sequelize.query(
+          `ALTER TABLE ReviewImages AUTO_INCREMENT = 1;`
+        );
+      } else if (dbType === "postgres") {
+        await queryInterface.sequelize.query(
+          `ALTER SEQUENCE "ReviewImages_id_seq" RESTART WITH 1;`
+        );
+      }
+    }
   },
 };
