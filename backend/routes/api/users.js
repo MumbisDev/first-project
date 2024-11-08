@@ -70,6 +70,12 @@ router.post("/", validateSignup, async (req, res) => {
 
 router.get("/:userId", async (req, res) => {
   try {
+    if (req.user.id !== parseInt(req.params.userId)) {
+      return res.status(200).json({
+        user: null,
+      });
+    }
+
     const user = await User.findByPk(req.params.userId);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
