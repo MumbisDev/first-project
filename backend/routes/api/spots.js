@@ -1,5 +1,6 @@
 const express = require("express");
 const { Spot } = require("../../db/models");
+const { SpotImage } = require("../../db/models");
 const { requireAuth } = require("../../utils/auth");
 const { check } = require("express-validator");
 const { handleValidationErrors } = require("../../utils/validation");
@@ -35,11 +36,9 @@ const validateSpot = [
   handleValidationErrors,
 ];
 
-// Public route - anyone can see all spots
 router.get("/", async (req, res) => {
   try {
     const spots = await Spot.findAll();
-
     if (!spots) {
       return res.status(404).json({ message: "No spots found" });
     }
@@ -50,10 +49,8 @@ router.get("/", async (req, res) => {
   }
 });
 
-// Protected route - only authenticated users can see their spots
 router.get("/current/:userId", requireAuth, async (req, res) => {
   try {
-    // Check if the authenticated user matches the requested userId
     if (req.user.id !== parseInt(req.params.userId)) {
       return res.status(403).json({
         message: "Forbidden",
@@ -65,7 +62,7 @@ router.get("/current/:userId", requireAuth, async (req, res) => {
 
     const spots = await Spot.findAll({
       where: {
-        ownerId: req.params.userId, // Assuming spots have an ownerId field
+        ownerId: req.params.userId,
       },
     });
 
@@ -108,6 +105,38 @@ router.post("/", requireAuth, validateSpot, async (req, res) => {
     });
 
     res.status(201).json({ spot: newSpot });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+router.post("/:spotId/images", requireAuth, async (req, res) => {
+  try {
+    const spot = await Spot.findByPk(parseInt(req.params.spotId));
+
+    if (!spot) {
+      return res.status(404).json({
+        message: "Spot couldn't be found",
+      });
+    }
+
+    if (spot.ownerId !== req.user.id) {
+      return res.status(403).json({
+        message: "Forbidden",
+        errors: {
+          message: "You must be the owner of this spot to add images",
+        },
+      });
+    }
+
+    const spotImage = await SpotImage.create({
+      spotId: parseInt(req.params.spotId),
+      url: req.body.url,
+      preview: req.body.preview,
+    });
+
+    res.status(201).json({ image: spotImage });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Internal server error" });
