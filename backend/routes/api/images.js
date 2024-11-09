@@ -5,7 +5,7 @@ const { requireAuth } = require("../../utils/auth");
 const router = express.Router();
 
 // Delete a spot image
-router.delete("/spot/images/:imageId", requireAuth, async (req, res) => {
+router.delete("/images/:imageId", requireAuth, async (req, res) => {
   try {
     const spotImage = await SpotImage.findByPk(req.params.imageId, {
       include: [{ model: Spot }],
@@ -27,7 +27,7 @@ router.delete("/spot/images/:imageId", requireAuth, async (req, res) => {
 });
 
 // Delete a review image
-router.delete("/review/images/:imageId", requireAuth, async (req, res) => {
+router.delete("/images/:imageId", requireAuth, async (req, res) => {
   try {
     const reviewImage = await ReviewImage.findByPk(req.params.imageId, {
       include: [{ model: Review }],

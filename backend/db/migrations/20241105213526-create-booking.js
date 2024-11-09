@@ -22,23 +22,12 @@ module.exports = {
         onDelete: "CASCADE",
       },
       startDate: {
-        type: Sequelize.DATEONLY,
+        type: Sequelize.DATE,
         allowNull: false,
-        validate: {
-          isDate: true,
-          isAfter: new Date().toISOString().slice(0, 10),
-        },
       },
       endDate: {
-        type: Sequelize.DATEONLY,
+        type: Sequelize.DATE,
         allowNull: false,
-        validate: {
-          isDate: true,
-          isAfter: {
-            args: [Sequelize.col("startDate")],
-            msg: "endDate cannot be on or before startDate",
-          },
-        },
       },
       createdAt: {
         allowNull: false,

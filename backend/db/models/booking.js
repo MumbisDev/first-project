@@ -1,13 +1,7 @@
 "use strict";
-// const { Model } = require("sequelize");
-const { Model, Sequelize } = require("sequelize"); 
+const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class Booking extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
     static associate(models) {
       Booking.belongsTo(models.Spot, { foreignKey: "spotId" });
       Booking.belongsTo(models.User, { foreignKey: "userId" });
@@ -32,21 +26,26 @@ module.exports = (sequelize, DataTypes) => {
         references: { model: "Users", key: "id" },
       },
       startDate: {
-        type: DataTypes.DATEONLY,
+        type: DataTypes.DATE,
         allowNull: false,
         validate: {
           isDate: true,
-          isAfter: new Date().toISOString().slice(0, 10),
+          notInPast(value) {
+            if (new Date(value) < new Date()) {
+              throw new Error("startDate cannot be in the past");
+            }
+          },
         },
       },
       endDate: {
-        type: DataTypes.DATEONLY,
+        type: DataTypes.DATE,
         allowNull: false,
         validate: {
           isDate: true,
-          isAfter: {
-            args: [Sequelize.col("startDate")],
-            msg: "endDate cannot be on or before startDate",
+          validateEndDate(value) {
+            if (new Date(value) <= new Date(this.startDate)) {
+              throw new Error("endDate cannot be on or before startDate");
+            }
           },
         },
       },

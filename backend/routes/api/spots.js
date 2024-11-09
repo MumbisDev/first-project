@@ -6,6 +6,7 @@ const {
   SpotImage,
   User,
   ReviewImage,
+  Booking,
   sequelize,
 } = require("../../db/models");
 const { requireAuth } = require("../../utils/auth");
@@ -87,6 +88,17 @@ const validateQueryParams = [
     .optional()
     .isFloat({ min: 0 })
     .withMessage("Maximum price must be greater than or equal to 0"),
+  handleValidationErrors,
+];
+const validateBooking = [
+  check("startDate")
+    .exists({ checkFalsy: true })
+    .isDate({ format: "YYYY-MM-DD" })
+    .withMessage("Please provide a valid start date"),
+  check("endDate")
+    .exists({ checkFalsy: true })
+    .isDate({ format: "YYYY-MM-DD" })
+    .withMessage("Please provide a valid end date"),
   handleValidationErrors,
 ];
 
@@ -408,4 +420,148 @@ router.post(
     }
   }
 );
+
+router.get("/:spotId/bookings", requireAuth, async (req, res) => {
+  try {
+    const spot = await Spot.findByPk(req.params.spotId);
+    if (!spot) {
+      return res.status(404).json({ message: "Spot couldn't be found" });
+    }
+
+    // Different response based on ownership
+    if (spot.ownerId === req.user.id) {
+      const bookings = await Booking.findAll({
+        where: { spotId: req.params.spotId },
+        include: [
+          {
+            model: User,
+            attributes: ["id", "firstName", "lastName"],
+          },
+        ],
+      });
+      return res.json({ Bookings: bookings });
+    } else {
+      const bookings = await Booking.findAll({
+        where: { spotId: req.params.spotId },
+        attributes: ["spotId", "startDate", "endDate"],
+      });
+      return res.json({ Bookings: bookings });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+router.post(
+  "/:spotId/bookings",
+  requireAuth,
+  validateBooking,
+  async (req, res) => {
+    try {
+      const { startDate, endDate } = req.body;
+      const spotId = parseInt(req.params.spotId);
+
+      const spot = await Spot.findByPk(spotId);
+      if (!spot) {
+        return res.status(404).json({ message: "Spot couldn't be found" });
+      }
+
+      if (spot.ownerId === req.user.id) {
+        return res.status(403).json({ message: "Cannot book your own spot" });
+      }
+
+      // Check for existing bookings
+      const existingBooking = await Booking.findOne({
+        where: {
+          spotId,
+          [Op.or]: [
+            {
+              startDate: {
+                [Op.between]: [new Date(startDate), new Date(endDate)],
+              },
+            },
+            {
+              endDate: {
+                [Op.between]: [new Date(startDate), new Date(endDate)],
+              },
+            },
+            {
+              [Op.and]: [
+                { startDate: { [Op.lte]: new Date(startDate) } },
+                { endDate: { [Op.gte]: new Date(endDate) } },
+              ],
+            },
+          ],
+        },
+      });
+
+      if (existingBooking) {
+        return res.status(403).json({
+          message: "Sorry, this spot is already booked for the specified dates",
+          errors: {
+            startDate: "Start date conflicts with an existing booking",
+            endDate: "End date conflicts with an existing booking",
+          },
+        });
+      }
+
+      // Create the booking
+      const booking = await Booking.create({
+        spotId,
+        userId: req.user.id,
+        startDate: new Date(startDate),
+        endDate: new Date(endDate),
+      });
+
+      // Format response
+      const response = {
+        id: booking.id,
+        spotId: booking.spotId,
+        userId: booking.userId,
+        startDate: startDate,
+        endDate: endDate,
+        createdAt: booking.createdAt,
+        updatedAt: booking.updatedAt,
+      };
+
+      res.status(201).json(response);
+    } catch (err) {
+      console.error(err);
+      if (err.name === "SequelizeValidationError") {
+        res.status(400).json({
+          message: "Validation error",
+          errors: {
+            endDate: "endDate cannot be on or before startDate",
+            startDate: "startDate cannot be in the past",
+          },
+        });
+      } else {
+        res.status(500).json({ message: "Internal server error" });
+      }
+    }
+  }
+);
+
+router.delete("/images/:imageId", requireAuth, async (req, res) => {
+  try {
+    const spotImage = await SpotImage.findByPk(req.params.imageId, {
+      include: [{ model: Spot }],
+    });
+
+    if (!spotImage) {
+      return res.status(404).json({ message: "Spot Image couldn't be found" });
+    }
+
+    if (spotImage.Spot.ownerId !== req.user.id) {
+      return res.status(403).json({ message: "Forbidden" });
+    }
+
+    await spotImage.destroy();
+    res.json({ message: "Successfully deleted" });
+  } catch (err) {
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 module.exports = router;
