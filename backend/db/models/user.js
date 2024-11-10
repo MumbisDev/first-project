@@ -3,15 +3,15 @@
 const { Model, Validator } = require("sequelize");
 
 module.exports = (sequelize, DataTypes) => {
-  class Users extends Model {
+  class User extends Model {
     static associate(models) {
-      Users.hasMany(models.Spot, { foreignKey: "ownerId" });
-      Users.hasMany(models.Review, { foreignKey: "userId" });
-      Users.hasMany(models.Booking, { foreignKey: "userId" });
+      User.hasMany(models.Spot, { foreignKey: "ownerId" });
+      User.hasMany(models.Review, { foreignKey: "userId" });
+      User.hasMany(models.Booking, { foreignKey: "userId" });
     }
   }
 
-  Users.init(
+  User.init(
     {
       firstName: {
         type: DataTypes.STRING,
@@ -59,7 +59,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       sequelize,
-      modelName: "Users",
+      modelName: "User",
       defaultScope: {
         attributes: {
           exclude: ["createdAt", "updatedAt"],
@@ -67,5 +67,5 @@ module.exports = (sequelize, DataTypes) => {
       },
     }
   );
-  return Users;
+  return User;
 };
