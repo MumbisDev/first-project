@@ -54,7 +54,9 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    options.tableName = "Users";
-    return queryInterface.dropTable(options);
+    // First, drop all tables that depend on Users
+    await queryInterface.dropTable("Spots", { cascade: true });
+    // Then drop the Users table
+    await queryInterface.dropTable("Users", { cascade: true });
   },
 };
