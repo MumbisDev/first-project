@@ -54,7 +54,17 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    options.tableName = "Users";
-    return queryInterface.dropTable(options);
+    // First drop any foreign key constraints
+    if (process.env.NODE_ENV === 'production') {
+      await queryInterface.sequelize.query(`
+        DROP TABLE IF EXISTS ${process.env.SCHEMA}."Spots" CASCADE;
+        DROP TABLE IF EXISTS ${process.env.SCHEMA}."Users" CASCADE;
+      `);
+    } else {
+      await queryInterface.sequelize.query(`
+        DROP TABLE IF EXISTS "Spots" CASCADE;
+        DROP TABLE IF EXISTS "Users" CASCADE;
+      `);
+    }
   },
 };
