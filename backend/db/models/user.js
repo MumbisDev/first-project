@@ -3,7 +3,7 @@
 const { Model, Validator } = require("sequelize");
 
 module.exports = (sequelize, DataTypes) => {
-  class User extends Model {
+  class Users extends Model {
     static associate(models) {
       User.hasMany(models.Spot, { foreignKey: "ownerId" });
       User.hasMany(models.Review, { foreignKey: "userId" });
@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
 
-  User.init(
+  Users.init(
     {
       firstName: {
         type: DataTypes.STRING,
