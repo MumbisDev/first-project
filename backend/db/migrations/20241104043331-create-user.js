@@ -54,7 +54,44 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    options.tableName = "Users";
-    return queryInterface.dropTable(options);
+    const schema =
+      process.env.NODE_ENV === "production" ? process.env.SCHEMA : null;
+
+    // Drop tables in correct order - from most dependent to least dependent
+    await queryInterface.dropTable({
+      tableName: "ReviewImages",
+      schema: schema,
+      cascade: true,
+    });
+
+    await queryInterface.dropTable({
+      tableName: "SpotImages",
+      schema: schema,
+      cascade: true,
+    });
+
+    await queryInterface.dropTable({
+      tableName: "Reviews",
+      schema: schema,
+      cascade: true,
+    });
+
+    await queryInterface.dropTable({
+      tableName: "Bookings",
+      schema: schema,
+      cascade: true,
+    });
+
+    await queryInterface.dropTable({
+      tableName: "Spots",
+      schema: schema,
+      cascade: true,
+    });
+
+    await queryInterface.dropTable({
+      tableName: "Users",
+      schema: schema,
+      cascade: true,
+    });
   },
 };
