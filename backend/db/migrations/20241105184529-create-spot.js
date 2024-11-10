@@ -2,31 +2,32 @@
 
 let options = {};
 if (process.env.NODE_ENV === "production") {
-  options.schema = process.env.SCHEMA;  
+  options.schema = process.env.SCHEMA;
 }
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable(
-      "Spots",
-      {
-        id: {
-          allowNull: false,
-          autoIncrement: true,
-          primaryKey: true,
-          type: Sequelize.INTEGER,
-        },
-        ownerId: {
-          type: Sequelize.INTEGER,
-          allowNull: false,
-          references: { 
-            model: {
-              tableName: "Users",
-              schema: process.env.SCHEMA
-            }, 
-            key: "id" 
+    await queryInterface.createTable("Spots", {
+      id: {
+        allowNull: false,
+        autoIncrement: true,
+        primaryKey: true,
+        type: Sequelize.INTEGER,
+      },
+      ownerId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: {
+            tableName: "Users",
+            schema:
+              process.env.NODE_ENV === "production"
+                ? process.env.SCHEMA
+                : undefined,
           },
-          onDelete: "CASCADE",
+          key: "id",
         },
+        onDelete: "CASCADE",
+      },
       address: {
         type: Sequelize.STRING,
         allowNull: false,
@@ -84,10 +85,11 @@ module.exports = {
         type: Sequelize.DATE,
         defaultValue: Sequelize.NOW,
       },
+      options,
     });
   },
   async down(queryInterface, Sequelize) {
-    options.tableName = "Spots";  
-    return queryInterface.dropTable(options);  
+    options.tableName = "Spots";
+    return queryInterface.dropTable(options);
   },
 };

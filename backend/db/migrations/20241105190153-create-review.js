@@ -9,20 +9,32 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      spotId: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        references: {
-          model: "Spots",
-          key: "id",
-        },
-        onDelete: "CASCADE",
-      },
       userId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: "Users",
+          model: {
+            tableName: "Users",
+            schema:
+              process.env.NODE_ENV === "production"
+                ? process.env.SCHEMA
+                : undefined,
+          },
+          key: "id",
+        },
+        onDelete: "CASCADE",
+      },
+      spotId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: {
+            tableName: "Spots",
+            schema:
+              process.env.NODE_ENV === "production"
+                ? process.env.SCHEMA
+                : undefined,
+          },
           key: "id",
         },
         onDelete: "CASCADE",
@@ -49,6 +61,7 @@ module.exports = {
         type: Sequelize.DATE,
         defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
       },
+      options,
     });
   },
   async down(queryInterface, Sequelize) {
