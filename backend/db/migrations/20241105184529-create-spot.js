@@ -4,90 +4,78 @@ let options = {};
 if (process.env.NODE_ENV === "production") {
   options.schema = process.env.SCHEMA;
 }
+
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("Spots", {
-      id: {
-        allowNull: false,
-        autoIncrement: true,
-        primaryKey: true,
-        type: Sequelize.INTEGER,
-      },
-      ownerId: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        references: {
-          model: {
-            tableName: "Users",
-            schema:
-              process.env.NODE_ENV === "production"
-                ? process.env.SCHEMA
-                : undefined,
+    await queryInterface.createTable(
+      "Spots",
+      {
+        id: {
+          allowNull: false,
+          autoIncrement: true,
+          primaryKey: true,
+          type: Sequelize.INTEGER,
+        },
+        ownerId: {
+          type: Sequelize.INTEGER,
+          allowNull: false,
+          references: {
+            model: "Users",
+            key: "id",
           },
-          key: "id",
+          onDelete: "CASCADE",
         },
-        onDelete: "CASCADE",
-      },
-      address: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
-      city: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
-      state: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
-      country: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
-      lat: {
-        type: Sequelize.DECIMAL(10, 7),
-        allowNull: false,
-        validate: {
-          min: -90,
-          max: 90,
+        address: {
+          type: Sequelize.STRING,
+          allowNull: false,
         },
-      },
-      lng: {
-        type: Sequelize.DECIMAL(10, 7),
-        allowNull: false,
-        validate: {
-          min: -180,
-          max: 180,
+        city: {
+          type: Sequelize.STRING,
+          allowNull: false,
         },
-      },
-      name: {
-        type: Sequelize.STRING(50),
-        allowNull: false,
-      },
-      description: {
-        type: Sequelize.TEXT,
-        allowNull: false,
-      },
-      price: {
-        type: Sequelize.DECIMAL(10, 2),
-        allowNull: false,
-        validate: {
-          min: 0,
+        state: {
+          type: Sequelize.STRING,
+          allowNull: false,
+        },
+        country: {
+          type: Sequelize.STRING,
+          allowNull: false,
+        },
+        lat: {
+          type: Sequelize.DECIMAL(10, 7),
+          allowNull: false,
+        },
+        lng: {
+          type: Sequelize.DECIMAL(10, 7),
+          allowNull: false,
+        },
+        name: {
+          type: Sequelize.STRING(50),
+          allowNull: false,
+        },
+        description: {
+          type: Sequelize.TEXT,
+          allowNull: false,
+        },
+        price: {
+          type: Sequelize.DECIMAL(10, 2),
+          allowNull: false,
+        },
+        createdAt: {
+          allowNull: false,
+          type: Sequelize.DATE,
+          defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
+        },
+        updatedAt: {
+          allowNull: false,
+          type: Sequelize.DATE,
+          defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
         },
       },
-      createdAt: {
-        allowNull: false,
-        type: Sequelize.DATE,
-        defaultValue: Sequelize.NOW,
-      },
-      updatedAt: {
-        allowNull: false,
-        type: Sequelize.DATE,
-        defaultValue: Sequelize.NOW,
-      },
-      options,
-    });
+      options
+    );
   },
+
   async down(queryInterface, Sequelize) {
     options.tableName = "Spots";
     return queryInterface.dropTable(options);
