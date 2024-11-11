@@ -87,7 +87,15 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    options.tableName = "Spots";  
-    return queryInterface.dropTable(options);  
+    options.tableName = "Spots";
+  
+    // Remove the foreign key constraint before dropping the table
+    await queryInterface.removeConstraint(
+      "Spots", // The table with the constraint
+      "Spots_ownerId_fkey" // The name of the foreign key constraint
+    );
+  
+    // Now drop the table
+    return queryInterface.dropTable(options);
   },
 };
