@@ -1384,7 +1384,7 @@ Delete an existing image for a Spot.
 - Request
 
   - Method: DELETE
-  - Route path: /api/spot/images/:imageId
+  - Route path: /api/spots/images/:imageId
   - Body: none
 
 - Successful Response
@@ -1422,7 +1422,7 @@ Delete an existing image for a Review.
 - Request
 
   - Method: DELETE
-  - Route path: /api/review/images/:imageId
+  - Route path: /api/reviews/images/:imageId
   - Body: none
 
 - Successful Response

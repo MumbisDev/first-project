@@ -2,7 +2,7 @@
 
 let options = {};
 if (process.env.NODE_ENV === "production") {
-  options.schema = process.env.SCHEMA;
+  options.schema = process.env.SCHEMA; // Define schema for production only
 }
 
 module.exports = {
@@ -54,9 +54,44 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    // First, drop all tables that depend on Users
-    await queryInterface.dropTable("Spots", { cascade: true });
-    // Then drop the Users table
-    await queryInterface.dropTable("Users", { cascade: true });
+    const schema =
+      process.env.NODE_ENV === "production" ? process.env.SCHEMA : null;
+
+    // Drop tables in correct order - from most dependent to least dependent
+    await queryInterface.dropTable({
+      tableName: "ReviewImages",
+      schema: schema,
+      cascade: true,
+    });
+
+    await queryInterface.dropTable({
+      tableName: "SpotImages",
+      schema: schema,
+      cascade: true,
+    });
+
+    await queryInterface.dropTable({
+      tableName: "Reviews",
+      schema: schema,
+      cascade: true,
+    });
+
+    await queryInterface.dropTable({
+      tableName: "Bookings",
+      schema: schema,
+      cascade: true,
+    });
+
+    await queryInterface.dropTable({
+      tableName: "Spots",
+      schema: schema,
+      cascade: true,
+    });
+
+    await queryInterface.dropTable({
+      tableName: "Users",
+      schema: schema,
+      cascade: true,
+    });
   },
 };

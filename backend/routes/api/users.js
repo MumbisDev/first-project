@@ -5,7 +5,7 @@ const { handleValidationErrors } = require("../../utils/validation");
 // const authenticate = require('../../utils/auth');
 
 const { setTokenCookie, requireAuth } = require("../../utils/auth");
-const { Users } = require("../../db/models");
+const { User } = require("../../db/models");
 
 const router = express.Router();
 
@@ -93,7 +93,7 @@ router.post("/login", validateLogin, async (req, res) => {
 
     const user = await User.findOne({
       where: {
-        email: credential, // Look up by email
+        email: credential,
       },
     });
 
@@ -106,8 +106,11 @@ router.post("/login", validateLogin, async (req, res) => {
       });
     }
 
+    // Convert binary password to string before comparison
+    const hashedPasswordString = user.hashedPassword.toString();
+
     // Compare password using bcrypt
-    const passwordMatch = await bcrypt.compare(password, user.hashedPassword);
+    const passwordMatch = await bcrypt.compare(password, hashedPasswordString);
 
     if (!passwordMatch) {
       return res.status(401).json({
@@ -143,14 +146,29 @@ router.post("/login", validateLogin, async (req, res) => {
     });
   }
 });
-
-router.post(
-  "/signup",
-  handleValidationErrors,
-  validateSignup,
-  async (req, res) => {
+router.post("/signup", validateSignup, async (req, res) => {
+  try {
     const { email, password, username, firstName, lastName } = req.body;
-    const hashedPassword = bcrypt.hashSync(password);
+
+    // Check if user already exists
+    const existingUser = await User.findOne({
+      where: {
+        email: email,
+      },
+    });
+
+    if (existingUser) {
+      return res.status(403).json({
+        message: "User already exists",
+        errors: {
+          email: "User with that email already exists",
+        },
+      });
+    }
+
+    // Hash password with bcrypt
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     const user = await User.create({
       email,
       username,
@@ -170,17 +188,18 @@ router.post(
     await setTokenCookie(res, safeUser);
 
     return res.status(201).json({
-      user: {
-        id: user.id,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-        username: user.username,
+      user: safeUser,
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({
+      message: "Signup failed",
+      errors: {
+        message: "An error occurred during signup.",
       },
     });
   }
-);
-
+});
 router.get("/spots", async (req, res) => {
   try {
     const spots = await Spot.findAll();
