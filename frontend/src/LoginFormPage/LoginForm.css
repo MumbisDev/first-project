@@ -1,0 +1,111 @@
+/* General container for centering the form */
+.login-container {
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+  
+  /* Style the page header */
+  h1 {
+    margin-bottom: 20px;
+    color: #333;
+    font-size: 1.5rem;
+  }
+  
+  /* Style for the form */
+  .login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  /* Style each input group (label + input) */
+  .input-group {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+  }
+  
+  /* Style the labels */
+  .input-group label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #555;
+  }
+  
+  /* Style the inputs */
+  .input-group input {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+    color: #333;
+    width: 100%;
+  }
+  
+  /* Input focus styling */
+  .input-group input:focus {
+    border-color: #007bff;
+    outline: none;
+  }
+  
+  /* Error message styling */
+  .error {
+    font-size: 0.875rem;
+    color: red;
+    margin-top: 5px;
+  }
+  
+  /* Style for the submit button */
+  .login-btn {
+    background-color: #007bff;
+    color: rgb(255, 255, 255);
+    padding: 12px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: 100%;
+  }
+  
+  .login-btn:hover {
+    background-color: #0056b3;
+  }
+
+  .signup-link {
+    margin-top: 15px;
+    font-size: 1rem;
+    color: #555;
+  }
+  
+  .signup-link a {
+    color: #007bff;
+    text-decoration: none;
+  }
+  
+  .signup-link a:hover {
+    text-decoration: underline;
+  }
+
+  @media (max-width: 480px) {
+    .login-container {
+      padding: 15px;
+    }
+  
+    h1 {
+      font-size: 1.25rem;
+    }
+  
+    .login-btn {
+      padding: 10px;
+    }
+  
+    .input-group input {
+      padding: 8px;
+    }
+  }
